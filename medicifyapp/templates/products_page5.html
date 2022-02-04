@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+
+{% block title %}Products{% endblock %}
+
+{% block body %}
+
+
+
+
+<style>
+.block11 {
+  display: block;
+  width: 100%;
+  border: none;
+  background-color: #FEC52C;
+  padding: 12px;
+  margin top: 10;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.block12 {
+  display: block;
+  width: 100%;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.text_max_3 {
+     overflow: hidden;
+     text-overflow: ellipsis;
+     display: -webkit-box;
+     -webkit-line-clamp: 2; /* number of lines to show */
+     -webkit-box-orient: vertical;
+  }
+
+
+.text_max_1 {
+     overflow: hidden;
+     text-overflow: ellipsis;
+     display: -webkit-box;
+     -webkit-line-clamp: 1; /* number of lines to show */
+     -webkit-box-orient: vertical;
+  }
+
+</style>
+
+
+
+
+
+
+<main>
+		<div class="container">
+
+
+			<div class="container margin_30">
+
+			<div class="row">
+                <div class="col-lg-9">
+                        {% if get_brand %}
+                        <h5>Brand {{get_brand.Brand_name}}</h5><hr>
+                        {% endif %}
+
+                        {% if get_prod_brand_cat_qty %}
+                        <div class="alert alert-warning" role="alert">
+                          <h5>Result {{get_prod_brand_cat_qty}} Products Found:</h5>
+                        </div>
+
+                        {% endif %}
+
+                        {% if all_prd %}
+                        {% for k in all_prd %}
+
+                        <div class="card mb-3 container" style="box-shadow: 5px 5px 5px #888888; max-width: 900px; margin-top:36px;">
+                          <div class="row no-gutters" style="padding-top:10px; padding-bottom:10px;">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-2">
+                              <a href="{% url 'details_products' k.id %}">
+                                <img src="/media/{{k.image}}" class="card-img" alt="..." height="150" width="100" style="padding-top:24px;">
+                              </a>
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="col-md-7">
+                              <div class="card-body">
+                                  <h5 class="card-title"><a href="{% url 'details_products' k.id %}">{{k.product_name}} </a></h5>
+                                  <span class="text-muted text_max_3">{{k.description | safe}}</span><br>
+								  <a href="{% url 'details_products' k.id %}" class="btn btn-warning">Request For Quote</a>
+								  {% if k.catalogue %}
+							<a href="/media/{{k.catalogue}}" class="btn btn-info" target="_blank">Catalogue</a>
+							{% endif %}
+
+							{% if k.datasheets %}
+							<a href="/media/{{k.datasheets}}" class="btn btn-info" target="_blank">Datasheets</a>
+							{% endif %}
+                              </div>
+                            </div>
+
+
+
+                          </div>
+                        </div>
+
+
+                        {% endfor %}
+
+
+                        {% else %}
+
+                        <div class="alert alert-warning container" role="alert">
+                          <h6 class="text-center">No Products Are Available Now !!!</h6>
+                        </div>
+
+                        {% endif %}
+
+
+
+
+                <div class="pagination__wrapper">
+						<ul class="pagination">
+							{% if list %}
+							<li>
+								{% if all_prd.has_previous %}
+                                <a href="?page={{all_prd.previous_page_number}}" class="prev" title="previous page">&#10094;</a>
+								{% endif %}
+							</li>
+							{% for i in list %}
+							<li>
+                                <a href="?page={{i}}" class="{% if page_num == i %}active{% else %}{% endif %}">{{i}}</a>
+							</li>
+							{% endfor %}
+
+							<li>
+								{% if all_prd.has_next %}
+                                <a href="?page={{all_prd.next_page_number}}" class="next" title="next page">&#10095;</a>
+								{% endif %}
+							</li>
+							{% endif %}
+
+						</ul>
+					</div>
+						<!-- /col -->
+
+                </div>
+
+				<div class="col-lg-3">
+					<ul class="list-group">
+
+						<div class="accordion" id="accordionExample" style="box-shadow: 2px 2px 5px 2px #888888;">
+							<div class="card">
+							<div class="card-header" id="headingOne_brands">
+							  <h2 class="mb-0">
+								<a href="{% url 'all_brands' %}" class="btn btn-link btn-block text-left text-center" style="background-color:#1D73CF; color:white;">
+									<span style="color:white;">See Brands</span>
+								</a>
+							  </h2>
+							</div>
+						  </div>
+
+
+
+						</div>
+					</ul><hr>
+
+
+					<ul class="list-group">
+
+						<div class="accordion" id="accordionExample_1" style="box-shadow: 2px 2px 5px 2px #888888;">
+							<div class="card">
+							<div class="card-header" id="headingOne_cats">
+							  <h2 class="mb-0">
+								<button class="btn btn-link btn-block text-left btn-primary text-center" type="button" data-toggle="collapse" data-target="#collapseOne_cats" aria-expanded="false" aria-controls="collapseOne_cats" disabled>
+									<span style="color:white;">Categories</span>
+								</button>
+							  </h2>
+							</div>
+						  </div>
+							{% for i in Categories_all %}
+						  <div class="card">
+							<div class="card-header" id="headingOne{{i.id}}">
+							  <h2 class="mb-0">
+								<button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne{{i.id}}" aria-expanded="false" aria-controls="collapseOne{{i.id}}">
+								  {% if i.subcat_list %}
+									{{i.category_name}} <small><a style="color:#8C19DB;" href="{% url 'subcats_of_cat' i.id %}">(visit&#8599;)</a></small>
+									{% else %}
+									<a href="{% url 'subcats_of_cat' i.id %}">{{i.category_name}}</a>
+									{% endif %}
+								</button>
+							  </h2>
+							</div>
+
+							<div id="collapseOne{{i.id}}" class="collapse" aria-labelledby="headingOne{{i.id}}" data-parent="#accordionExample">
+								{% if i.subcat_list %}
+							  <div class="card-body">
+
+								<ul class="list-group list-group-flush">
+									{% for j in i.subcat_list %}
+									<li class="list-group-item" style="background-color:white; color:#1D73CF;"><a href="{% url 'brands_list_subcat' j.id %}">{{j.Subcategory}}</a></li>
+									{% endfor %}
+								</ul>
+
+							  </div>
+								{% endif %}
+							</div>
+						  </div>
+							{% endfor %}
+
+							<div class="card">
+							<div class="card-header" id="headingOne_custom_project">
+							  <h2 class="mb-0">
+								<button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne_custom_project" aria-expanded="false" aria-controls="collapseOne_custom_project">
+									<a href="{% url 'custom_project' %}">Custom Project</a>
+								</button>
+							  </h2>
+							</div>
+
+
+						  </div>
+						</div>
+					</ul>
+				</div>
+				<!-- /col -->
+
+
+			</div>
+			<!-- /row -->
+
+		</div>
+            <!-- /container -->
+        </div>
+	</main>
+
+
+
+{% endblock %}
